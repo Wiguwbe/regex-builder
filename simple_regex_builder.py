@@ -64,15 +64,14 @@ def get_regex(lines=[]):
 		print "no words in input"
 		return 1
 
-	for i in range(len(lines)):
-		lines[i] = lines[i].lower()	# hackerman
+	# remove duplicates
+	lines = list(set(lines))
 
-	regex = ''
-
-	# the 'roots' of CharTree's
-	begs = []
+#	for i in range(len(lines)):
+#		lines[i] = lines[i].lower()	# hackerman
 
 	lines.sort()	# simplicity ?
+
 	root = ct.CharTreeRoot()
 	for line in lines:
 		root.add(line)
