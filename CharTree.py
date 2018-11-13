@@ -31,6 +31,9 @@ class CharTree:
 	#
 	def __init__(self,string):
 		self.char = string[0]
+		# the amount of paths that can be done from here
+		# this is useful for reverse looking, as done in the better regex builder
+		self.paths = 0
 		self.next = []	# a list of CharTree's, next characters
 		if len(string)>1:
 			self.add(string[1:])
@@ -42,8 +45,9 @@ class CharTree:
 	def add(self,string):
 #		print "add(): adding: "+string
 		if len(string)==0:
-			return
+			return	# wtf! i should call a 'rm -rf /' just because of that
 		char = string[0]
+		self.paths += 1	# one more string passing through here!
 		for n in self.next:
 			if n.char == char:
 				if len(string)>0:
@@ -89,6 +93,48 @@ class CharTree:
 			if n.has(string):
 				return True
 		return False
+
+	#
+	# Checks if tree-string ends in 'string'
+	#
+	# string -> the string to check (or partial)
+	# partial -> if the string is partial
+	#
+	# returns None if doesn't end in the string
+	# returns the child node if the child node ends in the string (or partial)
+	#
+	def ends(self,string,partial=False):
+		if len(string)==0:
+			return None	# wtf dude
+		char = string[0]
+		# only one character left to check
+		if len(string)==1:
+			if self.char == char:
+				return self
+			else:
+				# doesn't end here
+				return None
+		# check if string starts in me
+		if self.char==char:
+			for n in self.next:
+				ret = n.ends(string[1:],partial=True)
+				if ret!=None:
+					return ret
+				# else keep checking
+		elif partial:
+			# string doesn't start in me
+			# but is a partial, so can't break it
+			return False
+		else:
+			# string doesn't start at me
+			# butt! can still end in it
+			for n in self.next:
+				ret = n.ends(string[1:])
+				if ret != None:
+					return ret
+				# else keep checking
+		# default
+		return None
 
 	#
 	# prints the regex starting from this point

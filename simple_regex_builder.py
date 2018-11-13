@@ -35,9 +35,13 @@ def __help(argv_0=argv[0]):
 #
 def from_file(filename):
 	# read file lines
+	lines = []
 	try:
 		f = open(filename,"r")
-		lines = f.readlines()
+		_t = f.readlines()
+		for line in _t:
+			# chomp
+			lines.append(line[:-1])
 	except IOError:
 		print "failed to read from file"
 		return []
@@ -57,7 +61,9 @@ def __main(params):
 
 	print get_regex(lines)
 
-
+#
+# the main function of the 'module'
+#
 def get_regex(lines=[]):
 	ct.__SPECIAL_CHARS = __SPECIAL_CHARS
 	if len(lines)==0:
@@ -74,9 +80,11 @@ def get_regex(lines=[]):
 
 	root = ct.CharTreeRoot()
 	for line in lines:
-		root.add(line)
+		if len(line)>0:
+			root.add(line)
 	return root.regex()
 
+# if its called not as module
 if __name__=='__main__':
 	if len(argv)<2:
 		exit(__help(argv[0]))
